@@ -5,15 +5,19 @@ require('../db/mongoose');
 const User = require('../models/user');
 
 const router = express.Router();
-
+router.use(
+        bodyParser.urlencoded({
+                extended: false,
+        })
+);
 // lets make some routes
 
 router.get('/', (req, res) => {
         res.render('welcome.ejs');
 });
 
-router.get('/login', (req, res) => {
-        res.render('login.ejs');
+router.get('/users/login', (req, res) => {
+        res.render('users/login.ejs');
 });
 
 // router.get('/users/register', (req, res) => {
@@ -37,6 +41,7 @@ router.post('/users/login', async (req, res) => {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
                 const token = await user.generateAuthToken();
                 res.send({ user, token });
+                res.render('welcome.ejs');
         } catch (e) {
                 res.status(500).send(e);
                 console.log(e);

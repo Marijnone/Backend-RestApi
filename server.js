@@ -13,6 +13,7 @@ const app = express();
 
 // basic express config
 app.use(express.json());
+app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.listen(3000);
