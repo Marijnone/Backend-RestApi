@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // basic express config
-app.use(express.json());
+app.use(express.static('public'));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
