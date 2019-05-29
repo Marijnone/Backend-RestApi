@@ -20,9 +20,9 @@ router.get('/users/login', (req, res) => {
         res.render('users/login.ejs');
 });
 
-// router.get('/users/register', (req, res) => {
-//         res.render('users/new.ejs', { title: 'Register' });
-// });
+router.get('/users/register', (req, res) => {
+        res.render('users/new.ejs', { title: 'Register' });
+});
 
 router.post('/users/register', async (req, res) => {
         const user = new User(req.body);
@@ -30,7 +30,7 @@ router.post('/users/register', async (req, res) => {
         try {
                 await user.save();
                 const token = await user.generateAuthToken();
-                res.status(200).send(user, token);
+                res.render('users/succes.ejs', { user, token }).status(200);
         } catch (e) {
                 res.status(400).send(e);
         }

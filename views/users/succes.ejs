@@ -1,0 +1,14 @@
+<% include ../head.ejs %>
+<html>
+  <h1>Profile Page</h1>
+  <h5>succesfully created account for</h5>
+  <h5><%= user.name %></h5>
+  <h5>with email</h5>
+  <h5><%= user.email %></h5>
+  <p>Click here to login</p>
+  <form action="/users/login">
+    <input type="submit" value="Login" />
+  </form>
+</html>
+
+<% include ../bottom.ejs %>
