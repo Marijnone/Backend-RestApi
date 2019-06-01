@@ -18,10 +18,10 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.listen(3000);
 
-// app.use((req, res, next) => {
-//         console.log(req.method, req.path);
-//         next();
-// });
+app.use((req, res, next) => {
+        console.log(req.method, req.path);
+        next();
+});
 
 // const jwtFuntion = async () => {
 //         const token = jwt.sign({ _id: 'dummy' }, 'thisisthesecret', { expiresIn: '7 days' });

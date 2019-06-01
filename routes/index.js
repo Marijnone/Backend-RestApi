@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const auth = require('../src/middleware/auth');
 require('../db/mongoose');
 
 const User = require('../models/user');
@@ -40,14 +41,15 @@ router.post('/users/login', async (req, res) => {
         try {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
                 const token = await user.generateAuthToken();
-                res.render('users/profile.ejs', { user, token });
+                res.render('users/profile.ejs', { user, token }).status(200);
         } catch (e) {
                 res.status(500).send(e);
                 console.log(e);
         }
 });
-
-router.get('/users', async (req, res) => {
+// we here add auth as a second parameter to check
+// this route with middleware
+router.get('/users', auth, async (req, res) => {
         try {
                 const users = await User.find({});
                 res.send(users);
