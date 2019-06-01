@@ -49,22 +49,30 @@ router.post('/users/login', async (req, res) => {
 });
 // we here add auth as a second parameter to check
 // this route with middleware
+// i will keep this route around a little more it maybe come in handy
+
 router.get('/users', auth, async (req, res) => {
         try {
                 const users = await User.find({});
                 res.send(users);
+                // req.send(user);
         } catch (e) {
                 res.status(500).send();
         }
 });
+// we now have a route that grabs the user from the auth.js file
+// and it checks if the user is signed in and then shows the profile
 
-router.get('users/me', auth, async (req, res) => {
+router.get('/users/me', auth, async (req, res) => {
         try {
+                // user = req.user;
                 res.send(req.user);
+                console.log(user);
         } catch (e) {
-                res.status(500).send();
+                console.log(e);
         }
 });
+// res.render('profile.ejs');
 // if no user 404
 router.get('/users/:id', async (req, res) => {
         const _id = req.params.id;
