@@ -36,11 +36,14 @@ router.post('/users/register', async (req, res) => {
                 res.status(400).send(e);
         }
 });
+
+// we empty the array where al the sessions where stored
 router.post('/users/logout', auth, async (req, res) => {
         try {
                 req.user.tokens = [];
                 await req.user.save();
                 res.send();
+                res.redirect('/');
         } catch (e) {
                 res.status(500).send();
                 console.log(e);
@@ -106,7 +109,7 @@ router.get('/users/:id', async (req, res) => {
 // by creating a sort of guard that make sure that the updates are allowed
 // its some pretty complex code in my opinion but i understand what is happening
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
         const updates = Object.keys(req.body);
         const allowedUpdates = ['name', 'email', 'password', 'age'];
         const isValidOperation = updates.every(update => allowedUpdates.includes(update));
@@ -114,32 +117,25 @@ router.patch('/users/:id', async (req, res) => {
                 res.status(400).send({ error: 'Invalid updates this is not allowed' });
         }
         try {
-                const user = await User.findById(req.params.id);
                 // make the update the same as the user gives in req.body dynamic
-                updates.forEach(update => (user[update] = req.body[update]));
+                updates.forEach(update => (req.user[update] = req.body[update]));
 
-                await User.save();
+                await req.user.save();
                 // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-
-                if (!user) {
-                        return res.status(404).send();
-                }
-
-                res.send(user);
+                res.send(req.user);
         } catch (e) {
                 res.status(400).send(e);
         }
 });
 // Delete method same logic as before if there is no user send a 404 otherwise remove the user
-router.delete('/users/:id', async (req, res) => {
+// added some logic to make it more secur now you cant remove a random user id!!
+router.delete('/users/me', auth, async (req, res) => {
         try {
-                const user = await User.findByIdAndDelete(req.params.id);
-                if (!user) {
-                        return res.status(404).send();
-                }
-                res.send(user);
+                await req.user.remove();
+                res.send(req.user);
+                res.redirect('/');
         } catch (e) {
-                res.status(500).send(e);
+                res.status(500).send();
         }
 });
 module.exports = router;
