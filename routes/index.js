@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const auth = require('../src/middleware/auth');
 require('../db/mongoose');
 
@@ -11,6 +12,7 @@ router.use(
                 extended: false,
         })
 );
+
 // lets make some routes
 
 router.get('/', (req, res) => {
@@ -24,6 +26,10 @@ router.get('/users/login', (req, res) => {
 router.get('/users/register', (req, res) => {
         res.render('users/new.ejs', { title: 'Register' });
 });
+// router.get('/users/me/edit', auth, (req, res) => {
+//         // eslint-disable-next-line no-undef
+//         res.render('users/edit.ejs', { title: 'Edit', user });
+// });
 
 router.post('/users/register', async (req, res) => {
         const user = new User(req.body);
@@ -104,15 +110,17 @@ router.get('/users/:id', async (req, res) => {
                 res.status(500).send();
         }
 });
+
 // update the user value gets a little more difficult because some mongoose
 // methods can be called without notice of the middelware, to make sure our update gets trough correctly we have to change this
 // by creating a sort of guard that make sure that the updates are allowed
 // its some pretty complex code in my opinion but i understand what is happening
 
-router.patch('/users/me', auth, async (req, res) => {
+router.post('/users/me/edit', auth, async (req, res) => {
         const updates = Object.keys(req.body);
         const allowedUpdates = ['name', 'email', 'password', 'age'];
         const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+
         if (!isValidOperation) {
                 res.status(400).send({ error: 'Invalid updates this is not allowed' });
         }
@@ -121,9 +129,11 @@ router.patch('/users/me', auth, async (req, res) => {
                 updates.forEach(update => (req.user[update] = req.body[update]));
 
                 await req.user.save();
-                // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
                 res.send(req.user);
+                // res.redirect('users/profile.ejs');
         } catch (e) {
+                console.log(e);
+
                 res.status(400).send(e);
         }
 });
