@@ -18,9 +18,6 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.listen(3000);
 
-if (condition) {
-}
-
 // app.use((req, res, next) => {
 //         console.log(req.method, req.path);
 //         next();

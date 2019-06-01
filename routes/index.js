@@ -36,6 +36,17 @@ router.post('/users/register', async (req, res) => {
                 res.status(400).send(e);
         }
 });
+router.post('/users/logout', auth, async (req, res) => {
+        try {
+                req.user.tokens = [];
+                await req.user.save();
+                res.send();
+        } catch (e) {
+                res.status(500).send();
+                console.log(e);
+        }
+});
+
 // here we generate and sendback the token
 router.post('/users/login', async (req, res) => {
         try {
