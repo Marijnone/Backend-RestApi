@@ -64,10 +64,12 @@ router.get('/users', auth, async (req, res) => {
 // and it checks if the user is signed in and then shows the profile
 
 router.get('/users/me', auth, async (req, res) => {
+        // eslint-disable-next-line prefer-destructuring
+        const user = req.user;
         try {
                 // user = req.user;
-                res.send(req.user);
-                console.log(user);
+                res.render('users/profile.ejs', { user }).status(200);
+                // console.log(user);
         } catch (e) {
                 console.log(e);
         }
