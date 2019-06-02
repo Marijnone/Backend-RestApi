@@ -29,10 +29,11 @@ router.get('/users/login', (req, res) => {
 router.get('/users/register', (req, res) => {
         res.render('users/new.ejs', { title: 'Register' });
 });
-// router.get('/users/me/edit', (req, res) => {
-//         // eslint-disable-next-line no-undef
-//         res.render('users/edit.ejs', { title: 'Edit', user });
-// });
+
+router.get('/users/me/edit', (req, res) => {
+        // eslint-disable-next-line no-undef
+        res.render('users/edit.ejs', { title: 'Edit', user });
+});
 
 router.post('/users/register', async (req, res) => {
         const user = new User(req.body);
@@ -52,7 +53,7 @@ router.post('/users/logout', auth, async (req, res) => {
                 req.user.tokens = [];
                 await req.user.save();
                 res.send();
-                res.redirect('/');
+                res.render('welcome.ejs');
         } catch (e) {
                 res.status(500).send();
                 console.log(e);
@@ -64,13 +65,15 @@ router.post('/users/login', async (req, res) => {
         try {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
                 const token = await user.generateAuthToken();
+
                 res.render('./users/profile.ejs', { user, token });
-                res.send(user);
-                res.redirect('/users/me');
+                // console.log(token);
+                res.send(user, token);
+                // res.redirect('/users/me');
 
                 // res.render('/users/overview.ejs', { user, token }).status(200);
         } catch (e) {
-                res.status(500).render('users/error.ejs', { e });
+                res.render('users/error.ejs', { e }).status(500);
                 console.log(e);
         }
 });
@@ -94,7 +97,8 @@ router.get('/users', async (req, res) => {
 
 router.get('/users/me', auth, async (req, res) => {
         // eslint-disable-next-line prefer-destructuring
-        const user = req.user;
+
+        const { user } = req;
         try {
                 // user = req.user;
                 res.render('users/profile.ejs', { user }).status(200);
@@ -139,7 +143,6 @@ router.post('/users/me/edit', auth, async (req, res) => {
 
                 await req.user.save();
                 res.send(req.user);
-                // res.redirect('users/profile.ejs');
         } catch (e) {
                 console.log(e);
                 res.status(400).send(e);

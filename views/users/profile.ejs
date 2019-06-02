@@ -7,7 +7,7 @@
   <h5>Age:<% user.age %></h5>
   <h5><%= user.email %></h5>
   
-  <!-- <div class="data-form">
+  <div class="data-form">
     <form method="POST" action="/users/me/edit">
       <h2>Edit user:</h2>
       <label for="inputFirstName">First Name</label>
@@ -18,9 +18,12 @@
         placeholder="First"
         autofocus
       />
-      <button type="submit">Update</button> -->
-      <form method="GET" action="/users">
-        <input type="submit"/>
+      <button type="submit">Update</button>
+      <form method="GET" action="/users"> 
+        <input type="submit" value="go to maches"/> 
+      </form>
+      <form method="post" action="/users/logout"> 
+        <input type="submit" value="Logout"/> 
       </form>
   </div>
 </html>
