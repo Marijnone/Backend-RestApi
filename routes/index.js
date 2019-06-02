@@ -18,6 +18,9 @@ router.use(
 router.get('/', (req, res) => {
         res.render('welcome.ejs');
 });
+// router.get('/users/me', (req, res) => {
+//         res.render('users/profile.ejs');
+// });
 
 router.get('/users/login', (req, res) => {
         res.render('users/login.ejs');
@@ -26,7 +29,7 @@ router.get('/users/login', (req, res) => {
 router.get('/users/register', (req, res) => {
         res.render('users/new.ejs', { title: 'Register' });
 });
-// router.get('/users/me/edit', auth, (req, res) => {
+// router.get('/users/me/edit', (req, res) => {
 //         // eslint-disable-next-line no-undef
 //         res.render('users/edit.ejs', { title: 'Edit', user });
 // });
@@ -61,9 +64,13 @@ router.post('/users/login', async (req, res) => {
         try {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
                 const token = await user.generateAuthToken();
-                res.render('users/profile.ejs', { user, token }).status(200);
+                res.render('./users/profile.ejs', { user, token });
+                res.send(user);
+                res.redirect('/users/me');
+
+                // res.render('/users/overview.ejs', { user, token }).status(200);
         } catch (e) {
-                res.status(500).send(e);
+                res.status(500).render('users/error.ejs', { e });
                 console.log(e);
         }
 });
@@ -71,11 +78,13 @@ router.post('/users/login', async (req, res) => {
 // this route with middleware
 // i will keep this route around a little more it maybe come in handy
 
-router.get('/users', auth, async (req, res) => {
+// i had to remove auth because it does not work how i want it to..
+
+router.get('/users', async (req, res) => {
         try {
                 const users = await User.find({});
-                res.send(users);
-                // req.send(user);
+                res.render('users/overview.ejs', { users });
+                // res.send(users);
         } catch (e) {
                 res.status(500).send();
         }
@@ -105,7 +114,7 @@ router.get('/users/:id', async (req, res) => {
                 if (!user) {
                         return res.status(404).send();
                 }
-                res.send(user);
+                // res.send(user).render('users/overview.ejs');
         } catch (e) {
                 res.status(500).send();
         }
@@ -133,7 +142,6 @@ router.post('/users/me/edit', auth, async (req, res) => {
                 // res.redirect('users/profile.ejs');
         } catch (e) {
                 console.log(e);
-
                 res.status(400).send(e);
         }
 });
@@ -142,7 +150,7 @@ router.post('/users/me/edit', auth, async (req, res) => {
 router.delete('/users/me', auth, async (req, res) => {
         try {
                 await req.user.remove();
-                res.send(req.user);
+                res.send(req.user); // this is the auth user variable
                 res.redirect('/');
         } catch (e) {
                 res.status(500).send();

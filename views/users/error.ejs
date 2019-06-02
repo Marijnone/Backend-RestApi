@@ -1,0 +1,13 @@
+<% include ../head.ejs %>
+<html>
+  <h1>Oops Error</h1>
+  <h5>Unable to Login try again please</h5>
+
+  <h5><%= e %></h5>
+
+  <form action="/users/login">
+    <input type="submit" value="Login" />
+  </form>
+</html>
+
+<% include ../bottom.ejs %>
