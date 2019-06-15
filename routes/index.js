@@ -30,10 +30,10 @@ router.get('/users/register', (req, res) => {
         res.render('users/new.ejs', { title: 'Register' });
 });
 
-router.get('/users/me/edit', (req, res) => {
-        // eslint-disable-next-line no-undef
-        res.render('users/edit.ejs', { title: 'Edit', user });
-});
+// router.get('/users/me/edit', (req, res) => {
+//         // eslint-disable-next-line no-undef
+//         res.render('users/edit.ejs', { title: 'Edit', user });
+// });
 
 router.post('/users/register', async (req, res) => {
         const user = new User(req.body);
@@ -48,7 +48,7 @@ router.post('/users/register', async (req, res) => {
 });
 
 // we empty the array where al the sessions where stored
-router.post('/users/logout', auth, async (req, res) => {
+router.post('/users/logout', async (req, res) => {
         try {
                 req.user.tokens = [];
                 await req.user.save();
@@ -61,22 +61,34 @@ router.post('/users/logout', auth, async (req, res) => {
 });
 
 // here we generate and sendback the token
+// router.post('/users/login', async (req, res) => {
+//         try {
+//                 const user = await User.findByCredentials(req.body.email, req.body.password);
+//                 const token = await user.generateAuthToken();
+
+//                 res.render('./users/profile.ejs', { user, token });
+//                 // console.log(token);
+//                 res.send(user, token);
+//                 // res.redirect('/users/me');
+
+//                 // res.render('/users/overview.ejs', { user, token }).status(200);
+//         } catch (e) {
+//                 res.render('users/error.ejs', { e }).status(500);
+//                 console.log(e);
+//         }
+// });
 router.post('/users/login', async (req, res) => {
         try {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
                 const token = await user.generateAuthToken();
-
-                res.render('./users/profile.ejs', { user, token });
-                // console.log(token);
-                res.send(user, token);
-                // res.redirect('/users/me');
-
-                // res.render('/users/overview.ejs', { user, token }).status(200);
+                // res.send({ user, token });
+                res.render('users/profile.ejs', { token, user });
         } catch (e) {
-                res.render('users/error.ejs', { e }).status(500);
-                console.log(e);
+                // res.status(400).send();
+                res.render('users/error.ejs', { e }).res.status(400);
         }
 });
+
 // we here add auth as a second parameter to check
 // this route with middleware
 // i will keep this route around a little more it maybe come in handy
@@ -95,18 +107,18 @@ router.get('/users', async (req, res) => {
 // we now have a route that grabs the user from the auth.js file
 // and it checks if the user is signed in and then shows the profile
 
-router.get('/users/me', auth, async (req, res) => {
-        // eslint-disable-next-line prefer-destructuring
+// router.get('/users/me', async (req, res) => {
+//         // eslint-disable-next-line prefer-destructuring
 
-        const { user } = req;
-        try {
-                // user = req.user;
-                res.render('users/profile.ejs', { user }).status(200);
-                // console.log(user);
-        } catch (e) {
-                console.log(e);
-        }
-});
+//         const { user } = req;
+//         try {
+//                 // user = req.user;
+//                 res.render('users/profile.ejs', { user }).status(200);
+//                 // console.log(user);
+//         } catch (e) {
+//                 console.log(e);
+//         }
+// });
 // res.render('profile.ejs');
 // if no user 404
 router.get('/users/:id', async (req, res) => {
@@ -118,7 +130,6 @@ router.get('/users/:id', async (req, res) => {
                 if (!user) {
                         return res.status(404).send();
                 }
-                // res.send(user).render('users/overview.ejs');
         } catch (e) {
                 res.status(500).send();
         }
@@ -129,7 +140,7 @@ router.get('/users/:id', async (req, res) => {
 // by creating a sort of guard that make sure that the updates are allowed
 // its some pretty complex code in my opinion but i understand what is happening
 
-router.post('/users/me/edit', auth, async (req, res) => {
+router.post('/users/me/edit', async (req, res) => {
         const updates = Object.keys(req.body);
         const allowedUpdates = ['name', 'email', 'password', 'age'];
         const isValidOperation = updates.every(update => allowedUpdates.includes(update));
@@ -143,6 +154,7 @@ router.post('/users/me/edit', auth, async (req, res) => {
 
                 await req.user.save();
                 res.send(req.user);
+                res.render('profile.ejs', { user });
         } catch (e) {
                 console.log(e);
                 res.status(400).send(e);
@@ -150,7 +162,7 @@ router.post('/users/me/edit', auth, async (req, res) => {
 });
 // Delete method same logic as before if there is no user send a 404 otherwise remove the user
 // added some logic to make it more secur now you cant remove a random user id!!
-router.delete('/users/me', auth, async (req, res) => {
+router.delete('/users/me', async (req, res) => {
         try {
                 await req.user.remove();
                 res.send(req.user); // this is the auth user variable
