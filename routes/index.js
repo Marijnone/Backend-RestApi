@@ -18,9 +18,6 @@ router.use(
 router.get('/', (req, res) => {
         res.render('welcome.ejs');
 });
-// router.get('/users/me', (req, res) => {
-//         res.render('users/profile.ejs');
-// });
 
 router.get('/users/login', (req, res) => {
         res.render('users/login.ejs');
@@ -98,8 +95,8 @@ router.post('/users/login', async (req, res) => {
 router.get('/users', async (req, res) => {
         try {
                 const users = await User.find({});
-                res.render('users/overview.ejs', { users });
-                // res.send(users);
+                // res.render('users/overview.ejs', { users });
+                res.send(users);
         } catch (e) {
                 res.status(500).send();
         }
@@ -162,13 +159,15 @@ router.post('/users/me/edit', async (req, res) => {
 });
 // Delete method same logic as before if there is no user send a 404 otherwise remove the user
 // added some logic to make it more secur now you cant remove a random user id!!
-router.delete('/users/me', async (req, res) => {
+router.delete('/users/:id', async (req, res) => {
         try {
-                await req.user.remove();
-                res.send(req.user); // this is the auth user variable
-                res.redirect('/');
+                const user = await User.findByIdAndDelete(req.params.id);
+                if (!user) {
+                        return res.status(404).send();
+                }
+                res.send(user);
         } catch (e) {
-                res.status(500).send();
+                res.status(500).send(e);
         }
 });
 module.exports = router;
