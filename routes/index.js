@@ -57,23 +57,6 @@ router.post('/users/logout', async (req, res) => {
         }
 });
 
-// here we generate and sendback the token
-// router.post('/users/login', async (req, res) => {
-//         try {
-//                 const user = await User.findByCredentials(req.body.email, req.body.password);
-//                 const token = await user.generateAuthToken();
-
-//                 res.render('./users/profile.ejs', { user, token });
-//                 // console.log(token);
-//                 res.send(user, token);
-//                 // res.redirect('/users/me');
-
-//                 // res.render('/users/overview.ejs', { user, token }).status(200);
-//         } catch (e) {
-//                 res.render('users/error.ejs', { e }).status(500);
-//                 console.log(e);
-//         }
-// });
 router.post('/users/login', async (req, res) => {
         try {
                 const user = await User.findByCredentials(req.body.email, req.body.password);
