@@ -87,6 +87,7 @@ router.get('/users', async (req, res) => {
 // we now have a route that grabs the user from the auth.js file
 // and it checks if the user is signed in and then shows the profile
 
+<<<<<<< HEAD
 // router.get('/users/me', async (req, res) => {
 //         // eslint-disable-next-line prefer-destructuring
 
@@ -99,6 +100,17 @@ router.get('/users', async (req, res) => {
 //                 console.log(e);
 //         }
 // });
+=======
+router.get('/users/me', auth, async (req, res) => {
+        try {
+                // user = req.user;
+                res.send(req.user);
+                console.log(user);
+        } catch (e) {
+                console.log(e);
+        }
+});
+>>>>>>> parent of b360f8d... /me renders with the right data and is protected with auth :)
 // res.render('profile.ejs');
 // if no user 404
 router.get('/users/:id', async (req, res) => {

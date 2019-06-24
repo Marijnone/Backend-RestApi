@@ -18,5 +18,21 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.listen(port);
 
+<<<<<<< HEAD
+=======
+// app.use((req, res, next) => {
+//         console.log(req.method, req.path);
+//         next();
+// });
+
+// const jwtFuntion = async () => {
+//         const token = jwt.sign({ _id: 'dummy' }, 'thisisthesecret', { expiresIn: '7 days' });
+//         console.log(token);
+
+//         const data = jwt.verify(token, 'thisisthesecret');
+//         console.log(data);
+// };
+// jwtFuntion();
+>>>>>>> parent of b360f8d... /me renders with the right data and is protected with auth :)
 // use the routes from the routes/index.js file
 app.use('/', routes);
