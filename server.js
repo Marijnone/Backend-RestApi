@@ -16,10 +16,10 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', 'views');
-app.listen(port);
-
-<<<<<<< HEAD
-=======
+// app.listen(port);
+app.listen(process.env.PORT || 3000, function() {
+        console.log('Express server listening on port %d in %s mode', this.address().port, app.settings.env);
+});
 // app.use((req, res, next) => {
 //         console.log(req.method, req.path);
 //         next();
@@ -33,6 +33,8 @@ app.listen(port);
 //         console.log(data);
 // };
 // jwtFuntion();
->>>>>>> parent of b360f8d... /me renders with the right data and is protected with auth :)
 // use the routes from the routes/index.js file
 app.use('/', routes);
+app.listen(process.env.PORT || 3000, function() {
+        console.log('Express server listening on port %d in %s mode', this.address().port, app.settings.env);
+});
